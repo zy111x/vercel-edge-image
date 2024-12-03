@@ -66,7 +66,7 @@ export default async function handler(request) {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				location: 'https://github.com/ccbikai/vercel-edge-image',
+				location: 'https://home.291055.xyz/',
 			},
 		});
 	}
