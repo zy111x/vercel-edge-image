@@ -66,7 +66,7 @@ export default async function handler(request) {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				location: 'https://home.291055.xyz/',
+				location: 'https://blog.291055.xyz/',
 			},
 		});
 	}
