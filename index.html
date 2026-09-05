@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="description" content="Edge Image Studio - 基于 Vercel Edge 与 Photon 的可视化图片处理工作台" />
+  <title>Edge Image Studio</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Edge Image Studio 首页">
+      <span class="brand-mark"><span></span><span></span><span></span></span>
+      <span class="brand-copy">
+        <strong>Edge Image</strong>
+        <small>Studio</small>
+      </span>
+    </a>
+    <div class="topbar-actions">
+      <button class="ghost-button" id="newImageButton" type="button" hidden>＋ 新图片</button>
+      <a class="ghost-button" href="https://github.com/zy111x/vercel-edge-image" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="landing" id="landingView">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse-dot"></span> Vercel Edge · Photon WASM</div>
+        <h1>不再拼参数。<br><span>直接把图片处理好。</span></h1>
+        <p>缩放、裁剪、旋转、滤镜、水印、格式转换与多步骤管线，全部变成直观的可视化操作。</p>
+      </div>
+
+      <div class="import-card" id="dropZone">
+        <div class="upload-icon">↥</div>
+        <h2>拖入一张图片开始</h2>
+        <p>或从本地选择图片。无需先上传到图床。</p>
+        <button class="primary-button" id="chooseFileButton" type="button">选择图片</button>
+        <input id="fileInput" type="file" accept="image/*" hidden />
+        <div class="divider"><span>或者</span></div>
+        <form class="url-form" id="urlForm">
+          <input id="urlInput" type="url" placeholder="粘贴图片 URL，例如 https://.../image.jpg" autocomplete="off" />
+          <button type="submit">载入</button>
+        </form>
+        <small class="privacy-note">本地图片仅在处理请求中发送，不会存储；URL 模式仍支持 CDN 缓存。</small>
+      </div>
+
+      <div class="feature-grid">
+        <article><span>↔</span><strong>缩放</strong><small>尺寸与采样方式</small></article>
+        <article><span>✂</span><strong>裁剪</strong><small>坐标与常用比例</small></article>
+        <article><span>↻</span><strong>旋转</strong><small>任意角度与翻转</small></article>
+        <article><span>◐</span><strong>滤镜</strong><small>预设色彩风格</small></article>
+        <article><span>▧</span><strong>水印</strong><small>图片与文字水印</small></article>
+        <article><span>⛓</span><strong>管线</strong><small>多操作组合执行</small></article>
+      </div>
+    </section>
+
+    <section class="studio" id="studioView" hidden>
+      <aside class="tool-rail" aria-label="图片工具">
+        <button class="tool-button active" data-tool="resize"><span>↔</span><small>缩放</small></button>
+        <button class="tool-button" data-tool="crop"><span>✂</span><small>裁剪</small></button>
+        <button class="tool-button" data-tool="rotate"><span>↻</span><small>旋转</small></button>
+        <button class="tool-button" data-tool="filter"><span>◐</span><small>滤镜</small></button>
+        <button class="tool-button" data-tool="adjust"><span>☼</span><small>调整</small></button>
+        <button class="tool-button" data-tool="watermark"><span>▧</span><small>图片水印</small></button>
+        <button class="tool-button" data-tool="text"><span>T</span><small>文字水印</small></button>
+        <button class="tool-button" data-tool="format"><span>⇄</span><small>格式</small></button>
+        <button class="tool-button" data-tool="pipeline"><span>⛓</span><small>管线</small></button>
+      </aside>
+
+      <section class="canvas-shell">
+        <div class="canvas-toolbar">
+          <div class="image-meta">
+            <span class="status-dot"></span>
+            <strong id="imageName">image</strong>
+            <small id="imageDimensions">—</small>
+          </div>
+          <div class="canvas-actions">
+            <button class="small-button" id="compareButton" type="button" disabled>按住看原图</button>
+            <button class="small-button" id="fitButton" type="button">适应窗口</button>
+          </div>
+        </div>
+
+        <div class="canvas-stage" id="canvasStage">
+          <div class="checkerboard"></div>
+          <img id="previewImage" alt="图片预览" />
+          <div class="processing-mask" id="processingMask" hidden>
+            <div class="spinner"></div>
+            <strong>正在处理图片</strong>
+            <small>Photon WASM on Vercel Edge</small>
+          </div>
+        </div>
+
+        <div class="pipeline-bar">
+          <div class="pipeline-title">
+            <span>处理流程</span>
+            <small id="pipelineCount">0 个步骤</small>
+          </div>
+          <div class="pipeline-chips" id="pipelineChips">
+            <span class="empty-pipeline">选择左侧工具并添加操作</span>
+          </div>
+          <button class="run-button" id="runButton" type="button">生成预览 <span>→</span></button>
+        </div>
+      </section>
+
+      <aside class="inspector">
+        <div class="inspector-header">
+          <div>
+            <small>当前工具</small>
+            <h2 id="toolTitle">缩放图片</h2>
+          </div>
+          <span class="tool-badge" id="toolBadge">Resize</span>
+        </div>
+        <div class="inspector-body" id="toolPanel"></div>
+        <div class="export-card">
+          <div>
+            <small>输出</small>
+            <strong id="exportSummary">WEBP · 92%</strong>
+          </div>
+          <button class="download-button" id="downloadButton" type="button" disabled>下载图片 ↓</button>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
