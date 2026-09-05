@@ -1,11 +1,16 @@
-const FABRIC_SOURCES = [
+const RAW_FABRIC_SOURCES = [
   'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js',
   'https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js',
   'https://unpkg.com/fabric@5.3.0/dist/fabric.min.js',
   'https://raw.githubusercontent.com/fabricjs/fabric.js/v5.3.0/dist/fabric.min.js',
 ];
 
-function loadScript(src, timeoutMs = 2600) {
+const FABRIC_SOURCES = [
+  ...RAW_FABRIC_SOURCES.map((url) => `/api/vendor?url=${encodeURIComponent(url)}`),
+  ...RAW_FABRIC_SOURCES,
+];
+
+function loadScript(src, timeoutMs = 4200) {
   return new Promise((resolve) => {
     if (window.fabric) return resolve(true);
     const script = document.createElement('script');
@@ -22,8 +27,10 @@ function loadScript(src, timeoutMs = 2600) {
     const timer = setTimeout(() => finish(false), timeoutMs);
     script.src = src;
     script.async = true;
-    script.crossOrigin = 'anonymous';
-    script.referrerPolicy = 'no-referrer';
+    if (/^https?:\/\//i.test(src)) {
+      script.crossOrigin = 'anonymous';
+      script.referrerPolicy = 'no-referrer';
+    }
     script.onload = () => finish(true);
     script.onerror = () => finish(false);
     document.head.appendChild(script);
@@ -32,8 +39,16 @@ function loadScript(src, timeoutMs = 2600) {
 
 async function ensureFabric() {
   if (window.fabric) return true;
+
+  // Same-origin Vercel proxy first. This avoids browsers/networks that block public CDNs.
+  for (const source of FABRIC_SOURCES.slice(0, RAW_FABRIC_SOURCES.length)) {
+    if (await loadScript(source)) return true;
+  }
+
+  // Direct CDN requests are only a final fallback.
   return new Promise((resolve) => {
-    let remaining = FABRIC_SOURCES.length;
+    const direct = FABRIC_SOURCES.slice(RAW_FABRIC_SOURCES.length);
+    let remaining = direct.length;
     let settled = false;
     const finish = (value) => {
       if (settled) return;
@@ -48,7 +63,7 @@ async function ensureFabric() {
         resolve(Boolean(window.fabric));
       }
     };
-    for (const source of FABRIC_SOURCES) loadScript(source).then(finish);
+    for (const source of direct) loadScript(source).then(finish);
   });
 }
 
@@ -74,7 +89,7 @@ async function start() {
   const fabricReady = await ensureFabric();
   if (fabricReady) {
     try {
-      await import('/app-v3.js?v=20260905-4');
+      await import('/app-v3.js?v=20260905-5');
       markMode('v3');
       return;
     } catch (error) {
@@ -87,7 +102,7 @@ async function start() {
   }
 
   try {
-    await import('/app-v2.js?v=20260905-4');
+    await import('/app-v2.js?v=20260905-5');
     markMode('v2');
   } catch (error) {
     console.error('studio:v2-startup-error', error);
