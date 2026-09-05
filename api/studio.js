@@ -69,6 +69,52 @@ async function applyOperation(env, request, inputImage, operation, localImages) 
   return photon[action](inputImage, ...params) || inputImage;
 }
 
+function compositeTextOverlay(baseImage, overlayBytes) {
+  const overlayImage = photon.PhotonImage.new_from_byteslice(overlayBytes);
+  try {
+    const width = baseImage.get_width();
+    const height = baseImage.get_height();
+    const overlayWidth = overlayImage.get_width();
+    const overlayHeight = overlayImage.get_height();
+
+    if (width !== overlayWidth || height !== overlayHeight) {
+      throw new Error(`Text overlay size mismatch: base ${width}x${height}, overlay ${overlayWidth}x${overlayHeight}.`);
+    }
+
+    const base = baseImage.get_raw_pixels();
+    const over = overlayImage.get_raw_pixels();
+    const out = new Uint8Array(base.length);
+
+    for (let i = 0; i < base.length; i += 4) {
+      const srcA = over[i + 3] / 255;
+      if (srcA <= 0) {
+        out[i] = base[i];
+        out[i + 1] = base[i + 1];
+        out[i + 2] = base[i + 2];
+        out[i + 3] = base[i + 3];
+        continue;
+      }
+
+      const dstA = base[i + 3] / 255;
+      const outA = srcA + dstA * (1 - srcA);
+      if (outA <= 0) {
+        out[i] = 0; out[i + 1] = 0; out[i + 2] = 0; out[i + 3] = 0;
+        continue;
+      }
+
+      const keep = dstA * (1 - srcA);
+      out[i] = Math.max(0, Math.min(255, Math.round((over[i] * srcA + base[i] * keep) / outA)));
+      out[i + 1] = Math.max(0, Math.min(255, Math.round((over[i + 1] * srcA + base[i + 1] * keep) / outA)));
+      out[i + 2] = Math.max(0, Math.min(255, Math.round((over[i + 2] * srcA + base[i + 2] * keep) / outA)));
+      out[i + 3] = Math.max(0, Math.min(255, Math.round(outA * 255)));
+    }
+
+    return new photon.PhotonImage(out, width, height);
+  } finally {
+    if (overlayImage?.ptr) overlayImage.free();
+  }
+}
+
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST,OPTIONS', 'access-control-allow-headers': 'content-type' } });
   if (request.method !== 'POST') return jsonResponse({ error: 'Method not allowed.' }, 405);
@@ -90,8 +136,10 @@ export default async function handler(request) {
     if (watermarkFile && typeof watermarkFile.arrayBuffer === 'function' && watermarkFile.size > 0) {
       localImages.set('__watermark__', new Uint8Array(await watermarkFile.arrayBuffer()));
     }
+
+    let textOverlayBytes = null;
     if (textOverlay && typeof textOverlay.arrayBuffer === 'function' && textOverlay.size > 0) {
-      localImages.set('__text_overlay__', new Uint8Array(await textOverlay.arrayBuffer()));
+      textOverlayBytes = new Uint8Array(await textOverlay.arrayBuffer());
     }
 
     let imageBytes;
@@ -109,8 +157,11 @@ export default async function handler(request) {
         outputImage = next;
       }
 
-      if (localImages.has('__text_overlay__')) {
-        outputImage = await applyOperation(process.env, request, outputImage, { action: 'watermark', params: ['__text_overlay__', 0, 0] }, localImages);
+      if (textOverlayBytes) {
+        const previous = outputImage;
+        const composed = compositeTextOverlay(previous, textOverlayBytes);
+        if (previous !== inputImage && previous !== composed && previous?.ptr) previous.free();
+        outputImage = composed;
       }
 
       let bytes;
@@ -118,7 +169,14 @@ export default async function handler(request) {
       else if (format === 'png') bytes = outputImage.get_bytes();
       else bytes = await optimizeImage({ image: outputImage.get_bytes(), quality });
 
-      return new Response(bytes, { headers: { 'content-type': OUTPUT_FORMATS[format], 'cache-control': 'no-store', 'access-control-allow-origin': '*', 'x-edge-image-studio': 'v3' } });
+      return new Response(bytes, {
+        headers: {
+          'content-type': OUTPUT_FORMATS[format],
+          'cache-control': 'no-store',
+          'access-control-allow-origin': '*',
+          'x-edge-image-studio': 'v3-alpha-compose',
+        },
+      });
     } finally {
       if (outputImage !== inputImage && outputImage?.ptr) outputImage.free();
       if (inputImage?.ptr) inputImage.free();
