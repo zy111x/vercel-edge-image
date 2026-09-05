@@ -4,7 +4,7 @@ const FABRIC_SOURCES = [
   'https://unpkg.com/fabric@5.3.0/dist/fabric.min.js',
 ];
 
-function loadScript(src, timeoutMs = 2200) {
+function loadScript(src, timeoutMs = 2400) {
   return new Promise((resolve) => {
     if (window.fabric) return resolve(true);
     const script = document.createElement('script');
@@ -31,10 +31,24 @@ function loadScript(src, timeoutMs = 2200) {
 
 async function ensureFabric() {
   if (window.fabric) return true;
-  for (const source of FABRIC_SOURCES) {
-    if (await loadScript(source)) return true;
-  }
-  return false;
+  return new Promise((resolve) => {
+    let remaining = FABRIC_SOURCES.length;
+    let settled = false;
+    const finish = (value) => {
+      if (settled) return;
+      if (value) {
+        settled = true;
+        resolve(true);
+        return;
+      }
+      remaining -= 1;
+      if (remaining <= 0) {
+        settled = true;
+        resolve(Boolean(window.fabric));
+      }
+    };
+    for (const source of FABRIC_SOURCES) loadScript(source).then(finish);
+  });
 }
 
 function showFallbackNotice(message) {
@@ -49,7 +63,7 @@ async function start() {
   const fabricReady = await ensureFabric();
   if (fabricReady) {
     try {
-      await import('/app-v3.js?v=20260905-2');
+      await import('/app-v3.js?v=20260905-3');
       return;
     } catch (error) {
       console.error('studio:v3-startup-error', error);
@@ -61,7 +75,7 @@ async function start() {
   }
 
   try {
-    await import('/app-v2.js?v=20260905-2');
+    await import('/app-v2.js?v=20260905-3');
   } catch (error) {
     console.error('studio:v2-startup-error', error);
     showFallbackNotice('编辑器启动失败，请强制刷新页面后重试。');
