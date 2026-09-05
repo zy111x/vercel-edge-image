@@ -1,11 +1,12 @@
-/* Artistic font fallbacks for Edge Image Studio.
- * Prefer jsDelivr-hosted open fonts, then local OS fonts where available.
+/* Artistic font sources for Edge Image Studio.
+ * All remote CSS/font requests are routed through the same-origin Vercel proxy first,
+ * so browsers that cannot reach public CDNs can still load the artistic font set.
  */
-@import url('https://cdn.jsdelivr.net/npm/fontsource-zcool-kuaile@4.0.0/chinese-simplified.css');
-@import url('https://cdn.jsdelivr.net/npm/fontsource-zcool-qingke-huangyou@4.0.0/chinese-simplified.css');
-@import url('https://cdn.jsdelivr.net/npm/fontsource-noto-sans-sc@4.0.0/chinese-simplified.css');
-@import url('https://cdn.jsdelivr.net/npm/fontsource-noto-serif-sc@4.0.0/chinese-simplified.css');
-@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css');
+@import url('/api/vendor?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fnpm%2Ffontsource-zcool-kuaile%404.0.0%2Fchinese-simplified.css');
+@import url('/api/vendor?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fnpm%2Ffontsource-zcool-qingke-huangyou%404.0.0%2Fchinese-simplified.css');
+@import url('/api/vendor?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fnpm%2Ffontsource-noto-sans-sc%404.0.0%2Fchinese-simplified.css');
+@import url('/api/vendor?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fnpm%2Ffontsource-noto-serif-sc%404.0.0%2Fchinese-simplified.css');
+@import url('/api/vendor?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fnpm%2Flxgw-wenkai-webfont%401.7.0%2Fstyle.css');
 
 @font-face {
   font-family: 'Studio XingKai';
