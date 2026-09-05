@@ -7,6 +7,7 @@
   <meta name="description" content="Edge Image Studio - 基于 Vercel Edge 与 Photon 的可视化图片处理工作台" />
   <title>Edge Image Studio</title>
   <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/studio-v2.css" />
   <style>[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -46,15 +47,15 @@
           <input id="urlInput" type="url" placeholder="粘贴图片 URL，例如 https://.../image.jpg" autocomplete="off" />
           <button type="submit">载入</button>
         </form>
-        <small class="privacy-note">本地图片仅在处理请求中发送，不会存储；URL 模式仍支持 CDN 缓存。</small>
+        <small class="privacy-note">编辑阶段在浏览器本地即时预览；精确预览和导出才发送到 Photon 处理。</small>
       </div>
 
       <div class="feature-grid">
         <article><span>↔</span><strong>缩放</strong><small>尺寸与采样方式</small></article>
         <article><span>✂</span><strong>裁剪</strong><small>坐标与常用比例</small></article>
         <article><span>↻</span><strong>旋转</strong><small>任意角度与翻转</small></article>
-        <article><span>◐</span><strong>滤镜</strong><small>预设色彩风格</small></article>
-        <article><span>▧</span><strong>水印</strong><small>图片与文字水印</small></article>
+        <article><span>◐</span><strong>滤镜</strong><small>即时风格预览</small></article>
+        <article><span>↶</span><strong>历史</strong><small>撤销、重做、重置</small></article>
         <article><span>⛓</span><strong>管线</strong><small>多操作组合执行</small></article>
       </div>
     </section>
@@ -80,6 +81,12 @@
             <small id="imageDimensions">—</small>
           </div>
           <div class="canvas-actions">
+            <span class="preview-mode" id="previewMode"><span></span>浏览器即时预览</span>
+            <div class="history-actions">
+              <button class="small-button icon-button" id="undoButton" type="button" title="撤销 (Ctrl/⌘+Z)" disabled>↶</button>
+              <button class="small-button icon-button" id="redoButton" type="button" title="重做 (Ctrl/⌘+Shift+Z)" disabled>↷</button>
+            </div>
+            <button class="small-button danger-soft" id="resetButton" type="button" title="重置全部处理">重置</button>
             <button class="small-button" id="compareButton" type="button" disabled>按住看原图</button>
             <button class="small-button" id="fitButton" type="button">适应窗口</button>
           </div>
@@ -87,10 +94,11 @@
 
         <div class="canvas-stage" id="canvasStage">
           <div class="checkerboard"></div>
-          <img id="previewImage" alt="图片预览" />
+          <canvas id="previewCanvas" aria-label="即时图片预览" hidden></canvas>
+          <img id="previewImage" alt="Photon 精确图片预览" hidden />
           <div class="processing-mask" id="processingMask" hidden>
             <div class="spinner"></div>
-            <strong>正在处理图片</strong>
+            <strong>正在进行精确处理</strong>
             <small>Photon WASM on Vercel Edge</small>
           </div>
         </div>
@@ -101,9 +109,9 @@
             <small id="pipelineCount">0 个步骤</small>
           </div>
           <div class="pipeline-chips" id="pipelineChips">
-            <span class="empty-pipeline">选择左侧工具并添加操作</span>
+            <span class="empty-pipeline">参数调整会即时预览；应用后加入流程</span>
           </div>
-          <button class="run-button" id="runButton" type="button">生成预览 <span>→</span></button>
+          <button class="run-button" id="runButton" type="button">精确预览 <span>→</span></button>
         </div>
       </section>
 
@@ -121,13 +129,13 @@
             <small>输出</small>
             <strong id="exportSummary">WEBP · 92%</strong>
           </div>
-          <button class="download-button" id="downloadButton" type="button" disabled>下载图片 ↓</button>
+          <button class="download-button" id="downloadButton" type="button" disabled>导出图片 ↓</button>
         </div>
       </aside>
     </section>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app.js"></script>
+  <script type="module" src="/app-v2.js"></script>
 </body>
 </html>
