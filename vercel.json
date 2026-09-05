@@ -1,8 +1,22 @@
 {
-  "rewrites": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/api"
+      "src": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "url"
+        }
+      ],
+      "dest": "/api"
+    },
+    {
+      "src": "/image",
+      "dest": "/api"
+    },
+    {
+      "handle": "filesystem"
     }
   ]
 }
