@@ -6,8 +6,12 @@
   <meta name="theme-color" content="#0b1020" />
   <meta name="description" content="Edge Image Studio - 基于 Vercel Edge 与 Photon 的可视化图片处理工作台" />
   <title>Edge Image Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;600;700;800;900&family=Noto+Serif+SC:wght@400;600;700;900&family=Press+Start+2P&family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/studio-v2.css" />
+  <link rel="stylesheet" href="/studio-v3.css" />
   <style>[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -17,10 +21,7 @@
   <header class="topbar">
     <a class="brand" href="/" aria-label="Edge Image Studio 首页">
       <span class="brand-mark"><span></span><span></span><span></span></span>
-      <span class="brand-copy">
-        <strong>Edge Image</strong>
-        <small>Studio</small>
-      </span>
+      <span class="brand-copy"><strong>Edge Image</strong><small>Studio</small></span>
     </a>
     <div class="topbar-actions">
       <button class="ghost-button" id="newImageButton" type="button" hidden>＋ 新图片</button>
@@ -33,28 +34,21 @@
       <div class="hero-copy">
         <div class="eyebrow"><span class="pulse-dot"></span> Vercel Edge · Photon WASM</div>
         <h1>不再拼参数。<br><span>直接把图片处理好。</span></h1>
-        <p>缩放、裁剪、旋转、滤镜、水印、格式转换与多步骤管线，全部变成直观的可视化操作。</p>
+        <p>缩放、裁剪、旋转、滤镜、水印、艺术文字、格式转换与多步骤管线，全部变成直观的可视化操作。</p>
       </div>
-
       <div class="import-card" id="dropZone">
-        <div class="upload-icon">↥</div>
-        <h2>拖入一张图片开始</h2>
-        <p>或从本地选择图片。无需先上传到图床。</p>
+        <div class="upload-icon">↥</div><h2>拖入一张图片开始</h2><p>或从本地选择图片。无需先上传到图床。</p>
         <button class="primary-button" id="chooseFileButton" type="button">选择图片</button>
         <input id="fileInput" type="file" accept="image/*" hidden />
         <div class="divider"><span>或者</span></div>
-        <form class="url-form" id="urlForm">
-          <input id="urlInput" type="url" placeholder="粘贴图片 URL，例如 https://.../image.jpg" autocomplete="off" />
-          <button type="submit">载入</button>
-        </form>
+        <form class="url-form" id="urlForm"><input id="urlInput" type="url" placeholder="粘贴图片 URL，例如 https://.../image.jpg" autocomplete="off" /><button type="submit">载入</button></form>
         <small class="privacy-note">编辑阶段在浏览器本地即时预览；精确预览和导出才发送到 Photon 处理。</small>
       </div>
-
       <div class="feature-grid">
         <article><span>↔</span><strong>缩放</strong><small>尺寸与采样方式</small></article>
         <article><span>✂</span><strong>裁剪</strong><small>坐标与常用比例</small></article>
         <article><span>↻</span><strong>旋转</strong><small>任意角度与翻转</small></article>
-        <article><span>◐</span><strong>滤镜</strong><small>即时风格预览</small></article>
+        <article><span>T</span><strong>艺术文字</strong><small>字体、模板与图层</small></article>
         <article><span>↶</span><strong>历史</strong><small>撤销、重做、重置</small></article>
         <article><span>⛓</span><strong>管线</strong><small>多操作组合执行</small></article>
       </div>
@@ -68,75 +62,46 @@
         <button class="tool-button" data-tool="filter"><span>◐</span><small>滤镜</small></button>
         <button class="tool-button" data-tool="adjust"><span>☼</span><small>调整</small></button>
         <button class="tool-button" data-tool="watermark"><span>▧</span><small>图片水印</small></button>
-        <button class="tool-button" data-tool="text"><span>T</span><small>文字水印</small></button>
+        <button class="tool-button" data-tool="text"><span>T</span><small>文字图层</small></button>
         <button class="tool-button" data-tool="format"><span>⇄</span><small>格式</small></button>
         <button class="tool-button" data-tool="pipeline"><span>⛓</span><small>管线</small></button>
       </aside>
 
       <section class="canvas-shell">
         <div class="canvas-toolbar">
-          <div class="image-meta">
-            <span class="status-dot"></span>
-            <strong id="imageName">image</strong>
-            <small id="imageDimensions">—</small>
-          </div>
+          <div class="image-meta"><span class="status-dot"></span><strong id="imageName">image</strong><small id="imageDimensions">—</small></div>
           <div class="canvas-actions">
             <span class="preview-mode" id="previewMode"><span></span>浏览器即时预览</span>
-            <div class="history-actions">
-              <button class="small-button icon-button" id="undoButton" type="button" title="撤销 (Ctrl/⌘+Z)" disabled>↶</button>
-              <button class="small-button icon-button" id="redoButton" type="button" title="重做 (Ctrl/⌘+Shift+Z)" disabled>↷</button>
-            </div>
+            <div class="history-actions"><button class="small-button icon-button" id="undoButton" type="button" title="撤销 (Ctrl/⌘+Z)" disabled>↶</button><button class="small-button icon-button" id="redoButton" type="button" title="重做 (Ctrl/⌘+Shift+Z)" disabled>↷</button></div>
             <button class="small-button danger-soft" id="resetButton" type="button" title="重置全部处理">重置</button>
             <button class="small-button" id="compareButton" type="button" disabled>按住看原图</button>
             <button class="small-button" id="fitButton" type="button">适应窗口</button>
           </div>
         </div>
-
         <div class="canvas-stage" id="canvasStage">
           <div class="checkerboard"></div>
           <canvas id="previewCanvas" aria-label="即时图片预览" hidden></canvas>
           <img id="previewImage" alt="Photon 精确图片预览" hidden />
-          <div class="processing-mask" id="processingMask" hidden>
-            <div class="spinner"></div>
-            <strong>正在进行精确处理</strong>
-            <small>Photon WASM on Vercel Edge</small>
-          </div>
+          <div id="textCanvasHost" hidden><canvas id="textCanvas" aria-label="文字图层编辑画布"></canvas></div>
+          <div class="processing-mask" id="processingMask" hidden><div class="spinner"></div><strong>正在进行精确处理</strong><small>Photon WASM on Vercel Edge</small></div>
         </div>
-
         <div class="pipeline-bar">
-          <div class="pipeline-title">
-            <span>处理流程</span>
-            <small id="pipelineCount">0 个步骤</small>
-          </div>
-          <div class="pipeline-chips" id="pipelineChips">
-            <span class="empty-pipeline">参数调整会即时预览；应用后加入流程</span>
-          </div>
+          <div class="pipeline-title"><span>处理流程</span><small id="pipelineCount">0 个步骤</small></div>
+          <div class="pipeline-chips" id="pipelineChips"><span class="empty-pipeline">参数调整会即时预览；文字可直接在画布编辑</span></div>
           <button class="run-button" id="runButton" type="button">精确预览 <span>→</span></button>
         </div>
       </section>
 
       <aside class="inspector">
-        <div class="inspector-header">
-          <div>
-            <small>当前工具</small>
-            <h2 id="toolTitle">缩放图片</h2>
-          </div>
-          <span class="tool-badge" id="toolBadge">Resize</span>
-        </div>
+        <div class="inspector-header"><div><small>当前工具</small><h2 id="toolTitle">缩放图片</h2></div><span class="tool-badge" id="toolBadge">Resize</span></div>
         <div class="inspector-body" id="toolPanel"></div>
-        <div class="export-card">
-          <div>
-            <small>输出</small>
-            <strong id="exportSummary">WEBP · 92%</strong>
-          </div>
-          <button class="download-button" id="downloadButton" type="button" disabled>导出图片 ↓</button>
-        </div>
+        <div class="export-card"><div><small>输出</small><strong id="exportSummary">WEBP · 92%</strong></div><button class="download-button" id="downloadButton" type="button" disabled>导出图片 ↓</button></div>
       </aside>
     </section>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app-v2.js"></script>
-  <script src="/ux-patch.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
+  <script type="module" src="/app-v3.js"></script>
 </body>
 </html>
