@@ -2,9 +2,10 @@ const FABRIC_SOURCES = [
   'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js',
   'https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js',
   'https://unpkg.com/fabric@5.3.0/dist/fabric.min.js',
+  'https://raw.githubusercontent.com/fabricjs/fabric.js/v5.3.0/dist/fabric.min.js',
 ];
 
-function loadScript(src, timeoutMs = 2400) {
+function loadScript(src, timeoutMs = 2600) {
   return new Promise((resolve) => {
     if (window.fabric) return resolve(true);
     const script = document.createElement('script');
@@ -59,11 +60,22 @@ function showFallbackNotice(message) {
   setTimeout(() => notice.remove(), 5200);
 }
 
+function markMode(mode) {
+  document.documentElement.dataset.studioMode = mode;
+  const actions = document.querySelector('.topbar-actions');
+  if (!actions || document.querySelector('.studio-version-badge')) return;
+  const badge = document.createElement('span');
+  badge.className = `studio-version-badge ${mode === 'v3' ? '' : 'fallback'}`.trim();
+  badge.textContent = mode === 'v3' ? 'V3 · 艺术文字已启用' : '兼容模式 · 艺术文字未启用';
+  actions.prepend(badge);
+}
+
 async function start() {
   const fabricReady = await ensureFabric();
   if (fabricReady) {
     try {
-      await import('/app-v3.js?v=20260905-3');
+      await import('/app-v3.js?v=20260905-4');
+      markMode('v3');
       return;
     } catch (error) {
       console.error('studio:v3-startup-error', error);
@@ -75,7 +87,8 @@ async function start() {
   }
 
   try {
-    await import('/app-v2.js?v=20260905-3');
+    await import('/app-v2.js?v=20260905-4');
+    markMode('v2');
   } catch (error) {
     console.error('studio:v2-startup-error', error);
     showFallbackNotice('编辑器启动失败，请强制刷新页面后重试。');
