@@ -1,0 +1,39 @@
+/* Artistic font fallbacks for Edge Image Studio.
+ * Prefer jsDelivr-hosted open fonts, then local OS fonts where available.
+ */
+@import url('https://cdn.jsdelivr.net/npm/fontsource-zcool-kuaile@4.0.0/chinese-simplified.css');
+@import url('https://cdn.jsdelivr.net/npm/fontsource-zcool-qingke-huangyou@4.0.0/chinese-simplified.css');
+@import url('https://cdn.jsdelivr.net/npm/fontsource-noto-sans-sc@4.0.0/chinese-simplified.css');
+@import url('https://cdn.jsdelivr.net/npm/fontsource-noto-serif-sc@4.0.0/chinese-simplified.css');
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css');
+
+@font-face {
+  font-family: 'Studio XingKai';
+  src: local('STXingkai'), local('华文行楷'), local('STKaiti'), local('KaiTi');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Studio YouYuan';
+  src: local('YouYuan'), local('幼圆'), local('Microsoft YaHei');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Studio LiSu';
+  src: local('LiSu'), local('隶书'), local('SimHei');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Studio Hupo';
+  src: local('STHupo'), local('华文琥珀'), local('YouYuan'), local('幼圆');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Studio Caiyun';
+  src: local('STCaiyun'), local('华文彩云'), local('STHupo'), local('华文琥珀');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Studio FangSong';
+  src: local('FangSong'), local('仿宋'), local('STFangsong'), local('华文仿宋');
+  font-display: swap;
+}
