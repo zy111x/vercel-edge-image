@@ -1,82 +1,96 @@
-# Vercel Edge Image
+# Edge Image Studio
 
-使用 Vercel Edge 处理图片, 依赖 Photon，支持缩放、剪裁、水印、滤镜等功能。
+基于 **Vercel Edge + Photon WASM** 的图片处理服务，同时提供一个面向普通用户的可视化 Image Studio。
 
----
+原项目的 URL 参数 API 仍然保留；现在也可以直接打开网站，通过 UI 完成图片导入、处理、预览和下载，不需要手工编写 `resize!830,400,2|...` 这样的操作字符串。
 
-![Vercel Edge](https://img.shields.io/badge/Vercel-black?style=flat&logo=Vercel&logoColor=white)
-![GitHub License](https://img.shields.io/github/license/ccbikai/vercel-edge-image)
-![GitHub Repo stars](https://img.shields.io/github/stars/ccbikai/vercel-edge-image)
+## 功能
 
-> 已经适配了 Cloudflare Worker, 见 <https://github.com/ccbikai/cloudflare-worker-image> 。
+### 可视化工作台
 
-## 支持特性
+- 本地图片拖拽 / 选择上传
+- 远程图片 URL 导入
+- 图片缩放与采样方式选择
+- 坐标裁剪与 1:1、4:3、16:9、3:4、9:16 快速比例
+- 任意角度旋转、水平 / 垂直翻转
+- Photon 预设滤镜
+- 亮度、对比度调整
+- 图片水印（本地文件或远程 URL）
+- 文字水印
+- WEBP / JPEG / PNG 输出与质量控制
+- 多步骤管线组合、排序、删除、一次执行
+- 原图 / 处理结果对比
+- 结果下载
+- URL 图片场景下自动生成兼容 API URL
 
-1. 支持 PNG、JPEG、BMP、ICO、TIFF 格式图片处理
-2. 可输出 JPEG、PNG、WEBP 格式图片，默认输出 WEBP 格式图片
-3. 支持管道操作，可以执行多个操作
-4. 支持图片地址白名单，防滥用
-5. 异常降级，如果处理失败返回原图（异常场景不缓存）
+### API
 
-## 部署方式
+- 保留原有 GET 参数 API
+- 新增结构化 POST API，UI 内部使用 JSON 管线，不需要手工处理 URL 编码
+- 支持图片地址白名单
+- GET 远程图片处理结果继续使用 CDN 长缓存
+- POST / 本地文件处理结果使用 `no-store`
 
-```sh
-# patch 功能依赖 pnpm, 如果不使用 pnpm, 需要自己处理 patch-package https://www.npmjs.com/package/patch-package
+## 部署
+
+```bash
 npm i -g pnpm
-
-# 克隆此项目
-git clone https://github.com/ccbikai/vercel-edge-image.git
-cd vercel-edge-image
-
-# 安装依赖
 pnpm install
 
-# 修改白名单配置，改为图片域名或者留空不限制图片地址
 mv .env.example .env
-vi .env # WHITE_LIST
+# WHITE_LIST 可填写允许访问的图片域名，逗号分隔；留空表示不限制
 
-# 发布
 npm run deploy
 ```
 
-## 使用方式
+部署后直接访问根域名即可进入 Image Studio。
 
-修改域名和参数即可使用, 参考：<https://edge-image.miantiao.me/?url=https%3A%2F%2Fstatic.miantiao.me%2Fshare%2FMTyerw%2Fbanner-2048.jpeg&action=resize!830,400,2>
+## API 使用
 
-### 参数说明
+### 兼容模式：GET
 
-url:
-> 原图地址，需要使用 encodeURIComponent 编码
+```text
+/api?url=<ENCODED_IMAGE_URL>&action=resize!830,400,3|rotate!90&format=webp&quality=92
+```
 
-action:
-> 操作指令, 支持 [Photon](https://docs.rs/photon-rs/latest/photon_rs/) 各种操作指令，指令与参数直接使用`!`分割，参考 `resize!830,400,2`
->
-> 支持管道操作，多个操作指令使用`|`分割，参考 `resize!830,400,2|watermark!https%3A%2F%2Fstatic.miantiao.me%2Fshare%2F6qIq4w%2FFhSUzU.png,10,10`
->
-> 如果参数中有 URL 或其他特殊字符，需要使用 encodeURIComponent 编码 URL 和 特殊字符
+为了兼容旧版调用，当根路径存在 `url` 查询参数时，Vercel 路由会继续转发到图片 API；也可以使用 `/image` 作为更明确的图片处理入口。
 
-format:
-> 输出图片格式，支持：`jpg,webp,png`，可选，默认 webp
+参数：
 
-quality:
-> 图片质量，1-100 只有 webp 和 jpg 格式支持，可选，默认 99
+- `url`: 原图 URL
+- `action`: Photon 操作字符串，多个操作使用 `|` 连接
+- `format`: `webp` / `jpg` / `jpeg` / `png`
+- `quality`: 1-100
 
-## 演示
+### 推荐模式：POST JSON
 
-### 缩放+旋转+文字水印
+```json
+{
+  "url": "https://example.com/image.jpg",
+  "pipeline": [
+    { "action": "resize", "params": [1280, 720, 3] },
+    { "action": "filter", "params": ["vintage"] },
+    { "action": "rotate", "params": [90] }
+  ],
+  "format": "webp",
+  "quality": 92
+}
+```
 
-![demo](https://edge-image.miantiao.me/?url=https%3A%2F%2Fstatic.miantiao.me%2Fshare%2FMTyerw%2Fbanner-2048.jpeg&action=resize!830,400,2%7Crotate!180%7Cdraw_text!miantiao.me,10,10)
+请求地址：`POST /api`
 
-由于 Github 会缓存图片，请前往我博客查看真实示例。
+结构化管线更适合 UI、程序化调用和包含中文文本等复杂参数的场景。
 
-<http://chi.miantiao.me/post/vercel-edge-image/>
+### 本地文件
 
-## 致谢
+Image Studio 会使用 `multipart/form-data` 将本地文件发送到 `POST /api`，服务端处理完成后直接返回图片，不持久化保存原文件或结果文件。
 
-- [Cloudflare](https://www.cloudflare.com)
-- [photon](https://github.com/silvia-odwyer/photon)
-- [wasm-image-optimization](https://github.com/node-libraries/wasm-image-optimization)
+> 本地上传受 Vercel 请求体大小等平台限制影响。超大图片更推荐使用远程 URL 模式。
 
----
+## Photon
 
-[![Buy Me A Coffee](https://static.miantiao.me/share/0WmsVP/CcmGr8.png)](https://www.buymeacoffee.com/miantiao)
+项目当前使用 `@silvia-odwyer/photon 0.3.2`。Photon 提供缩放、裁剪、旋转、滤镜、颜色调整、水印、混合等大量图像处理函数；API 仍保留动态 Photon action 能力，因此后续可以继续把更多高级操作接入 UI。
+
+## License
+
+Apache-2.0

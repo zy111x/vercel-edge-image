@@ -1,0 +1,18 @@
+/* V3 stability and visual fixes. */
+.processing-mask{background:transparent!important;backdrop-filter:none!important;pointer-events:none}
+.processing-mask::before{content:'';position:absolute;left:50%;bottom:28px;width:210px;height:66px;transform:translateX(-50%);border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(8,12,21,.86);box-shadow:0 14px 34px rgba(0,0,0,.32)}
+.processing-mask>*{position:relative;z-index:1}
+.processing-mask .spinner{position:absolute;left:calc(50% - 85px);bottom:44px;width:22px;height:22px;margin:0}
+.processing-mask strong{position:absolute;left:calc(50% - 48px);bottom:53px}
+.processing-mask small{position:absolute;left:calc(50% - 48px);bottom:37px}
+
+.studio-version-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;border:1px solid rgba(98,230,164,.18);background:rgba(98,230,164,.06);color:#aee9c9;font-size:10px;white-space:nowrap}
+.studio-version-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:#62e6a4;box-shadow:0 0 0 4px rgba(98,230,164,.08)}
+.studio-version-badge.fallback{border-color:rgba(255,194,92,.2);background:rgba(255,194,92,.07);color:#ffd696}
+.studio-version-badge.fallback::before{background:#ffc25c;box-shadow:0 0 0 4px rgba(255,194,92,.08)}
+
+#textCanvasHost{position:absolute;z-index:2;overflow:visible}
+#textCanvasHost>#textCanvas{display:block;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;touch-action:none;user-select:none;-webkit-user-select:none}
+.font-card span{min-height:20px}
+.text-preset span{font-size:11px}
+.text-preset small{line-height:1.4}

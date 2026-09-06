@@ -1,0 +1,15 @@
+/* Stable local/system font aliases. No remote CSS or font CDN is required. */
+@font-face{font-family:'Studio Modern';src:local('Microsoft YaHei'),local('PingFang SC'),local('Noto Sans CJK SC');font-display:swap}
+@font-face{font-family:'Studio Serif';src:local('SimSun'),local('Songti SC'),local('Noto Serif CJK SC');font-display:swap}
+@font-face{font-family:'Studio WenKai';src:local('KaiTi'),local('Kaiti SC'),local('STKaiti'),local('FangSong');font-display:swap}
+@font-face{font-family:'Studio Cartoon';src:local('YouYuan'),local('幼圆'),local('Microsoft YaHei');font-display:swap}
+@font-face{font-family:'Studio Poster';src:local('SimHei'),local('Microsoft YaHei UI'),local('Arial Black');font-display:swap}
+@font-face{font-family:'Studio Brush';src:local('STXingkai'),local('华文行楷'),local('KaiTi');font-display:swap}
+@font-face{font-family:'Studio XingKai';src:local('STXingkai'),local('华文行楷'),local('KaiTi');font-display:swap}
+@font-face{font-family:'Studio Hupo';src:local('STHupo'),local('华文琥珀'),local('YouYuan'),local('Microsoft YaHei');font-display:swap}
+@font-face{font-family:'Studio Caiyun';src:local('STCaiyun'),local('华文彩云'),local('STHupo'),local('华文琥珀'),local('YouYuan');font-display:swap}
+@font-face{font-family:'Studio LiSu';src:local('LiSu'),local('隶书'),local('KaiTi');font-display:swap}
+@font-face{font-family:'Studio YouYuan';src:local('YouYuan'),local('幼圆'),local('Microsoft YaHei');font-display:swap}
+@font-face{font-family:'Studio FangSong';src:local('FangSong'),local('仿宋'),local('STFangsong'),local('华文仿宋');font-display:swap}
+@font-face{font-family:'Studio Hand';src:local('Segoe Print'),local('Comic Sans MS'),local('KaiTi');font-display:swap}
+@font-face{font-family:'Studio Pixel';src:local('Consolas'),local('Courier New');font-display:swap}
