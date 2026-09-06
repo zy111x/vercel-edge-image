@@ -1,73 +1,6 @@
-const RAW_FABRIC_SOURCES = [
-  'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js',
-  'https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js',
-  'https://unpkg.com/fabric@5.3.0/dist/fabric.min.js',
-  'https://raw.githubusercontent.com/fabricjs/fabric.js/v5.3.0/dist/fabric.min.js',
-];
+import '/stable-render-bridge.js?v=20260906-1';
 
-const FABRIC_SOURCES = [
-  ...RAW_FABRIC_SOURCES.map((url) => `/api/vendor?url=${encodeURIComponent(url)}`),
-  ...RAW_FABRIC_SOURCES,
-];
-
-function loadScript(src, timeoutMs = 4200) {
-  return new Promise((resolve) => {
-    if (window.fabric) return resolve(true);
-    const script = document.createElement('script');
-    let finished = false;
-    const finish = (ok) => {
-      if (finished) return;
-      finished = true;
-      clearTimeout(timer);
-      script.onload = null;
-      script.onerror = null;
-      if (!ok) script.remove();
-      resolve(Boolean(ok && window.fabric));
-    };
-    const timer = setTimeout(() => finish(false), timeoutMs);
-    script.src = src;
-    script.async = true;
-    if (/^https?:\/\//i.test(src)) {
-      script.crossOrigin = 'anonymous';
-      script.referrerPolicy = 'no-referrer';
-    }
-    script.onload = () => finish(true);
-    script.onerror = () => finish(false);
-    document.head.appendChild(script);
-  });
-}
-
-async function ensureFabric() {
-  if (window.fabric) return true;
-
-  // Same-origin Vercel proxy first. This avoids browsers/networks that block public CDNs.
-  for (const source of FABRIC_SOURCES.slice(0, RAW_FABRIC_SOURCES.length)) {
-    if (await loadScript(source)) return true;
-  }
-
-  // Direct CDN requests are only a final fallback.
-  return new Promise((resolve) => {
-    const direct = FABRIC_SOURCES.slice(RAW_FABRIC_SOURCES.length);
-    let remaining = direct.length;
-    let settled = false;
-    const finish = (value) => {
-      if (settled) return;
-      if (value) {
-        settled = true;
-        resolve(true);
-        return;
-      }
-      remaining -= 1;
-      if (remaining <= 0) {
-        settled = true;
-        resolve(Boolean(window.fabric));
-      }
-    };
-    for (const source of direct) loadScript(source).then(finish);
-  });
-}
-
-function showFallbackNotice(message) {
+function showNotice(message) {
   const notice = document.createElement('div');
   notice.style.cssText = 'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;padding:10px 14px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(14,18,30,.94);color:#dce2ee;font:12px/1.5 system-ui,-apple-system,sans-serif;box-shadow:0 12px 34px rgba(0,0,0,.32)';
   notice.textContent = message;
@@ -81,32 +14,26 @@ function markMode(mode) {
   if (!actions || document.querySelector('.studio-version-badge')) return;
   const badge = document.createElement('span');
   badge.className = `studio-version-badge ${mode === 'v3' ? '' : 'fallback'}`.trim();
-  badge.textContent = mode === 'v3' ? 'V3 · 艺术文字已启用' : '兼容模式 · 艺术文字未启用';
+  badge.textContent = mode === 'v3' ? 'V3 · 本地文字引擎已启用' : '兼容模式 · 文字引擎未启用';
   actions.prepend(badge);
 }
 
 async function start() {
-  const fabricReady = await ensureFabric();
-  if (fabricReady) {
-    try {
-      await import('/app-v3.js?v=20260905-5');
-      markMode('v3');
-      return;
-    } catch (error) {
-      console.error('studio:v3-startup-error', error);
-      showFallbackNotice('新版文字图层启动失败，已自动切换到稳定编辑模式。');
-    }
-  } else {
-    console.warn('studio:fabric-unavailable');
-    showFallbackNotice('艺术文字组件暂时无法加载，已自动切换到稳定编辑模式；图片功能仍可正常使用。');
+  try {
+    await import('/app-v3.js?v=20260906-1');
+    markMode('v3');
+    return;
+  } catch (error) {
+    console.error('studio:v3-startup-error', error);
+    showNotice('新版文字引擎启动失败，已自动切换到稳定图片编辑模式。');
   }
 
   try {
-    await import('/app-v2.js?v=20260905-5');
+    await import('/app-v2.js?v=20260906-1');
     markMode('v2');
   } catch (error) {
     console.error('studio:v2-startup-error', error);
-    showFallbackNotice('编辑器启动失败，请强制刷新页面后重试。');
+    showNotice('编辑器启动失败，请强制刷新页面后重试。');
   }
 }
 

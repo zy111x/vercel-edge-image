@@ -6,14 +6,11 @@
   <meta name="theme-color" content="#0b1020" />
   <meta name="description" content="Edge Image Studio - 基于 Vercel Edge 与 Photon 的可视化图片处理工作台" />
   <title>Edge Image Studio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;600;700;800;900&family=Noto+Serif+SC:wght@400;600;700;900&family=Press+Start+2P&family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/art-fonts.css?v=20260905-1" />
+  <link rel="stylesheet" href="/art-fonts.css?v=20260906-1" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/studio-v2.css" />
   <link rel="stylesheet" href="/studio-v3.css" />
-  <link rel="stylesheet" href="/studio-v3-hotfix.css?v=20260905-1" />
+  <link rel="stylesheet" href="/studio-v3-hotfix.css?v=20260906-1" />
   <style>[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -85,7 +82,7 @@
           <canvas id="previewCanvas" aria-label="即时图片预览" hidden></canvas>
           <img id="previewImage" alt="Photon 精确图片预览" hidden />
           <div id="textCanvasHost" hidden><canvas id="textCanvas" aria-label="文字图层编辑画布"></canvas></div>
-          <div class="processing-mask" id="processingMask" hidden><div class="spinner"></div><strong>正在进行精确处理</strong><small>Photon WASM on Vercel Edge</small></div>
+          <div class="processing-mask" id="processingMask" hidden><div class="spinner"></div><strong>正在进行精确处理</strong><small>Photon 主图处理 · 文字本地合成</small></div>
         </div>
         <div class="pipeline-bar">
           <div class="pipeline-title"><span>处理流程</span><small id="pipelineCount">0 个步骤</small></div>
@@ -103,6 +100,6 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app-bootstrap.js?v=20260905-4"></script>
+  <script type="module" src="/app-bootstrap.js?v=20260906-1"></script>
 </body>
 </html>

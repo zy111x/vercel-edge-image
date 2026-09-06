@@ -1,132 +1,16 @@
 export const TEXT_PRESETS = [
-  {
-    id: 'minimal-white',
-    name: '简约白字',
-    description: '干净通用',
-    style: {
-      fontFamily: 'Noto Sans SC', fontWeight: 700, fill: '#ffffff', opacity: 1,
-      stroke: 'rgba(0,0,0,0)', strokeWidth: 0, skewX: 0, charSpacing: 0,
-      shadow: { color: 'rgba(0,0,0,.32)', blur: 8, offsetX: 0, offsetY: 3 },
-    },
-  },
-  {
-    id: 'poster-outline',
-    name: '黑描边标题',
-    description: '高对比标题',
-    style: {
-      fontFamily: 'Noto Sans SC', fontWeight: 900, fill: '#ffffff', opacity: 1,
-      stroke: '#111111', strokeWidth: 5, skewX: 0, charSpacing: 20,
-      shadow: { color: 'rgba(0,0,0,.34)', blur: 8, offsetX: 3, offsetY: 4 },
-    },
-  },
-  {
-    id: 'cartoon-bubble',
-    name: '卡通泡泡字',
-    description: '站酷快乐体 · 明亮可爱',
-    style: {
-      fontFamily: 'ZCOOL KuaiLe', fontWeight: 400, fill: '#fff26a', opacity: 1,
-      stroke: '#6c4cff', strokeWidth: 7, skewX: -4, charSpacing: 30,
-      shadow: { color: 'rgba(0,0,0,.30)', blur: 5, offsetX: 5, offsetY: 7 },
-    },
-  },
-  {
-    id: 'candy-hupo',
-    name: '糖果琥珀字',
-    description: '圆润卡通 · 本机字体兜底',
-    style: {
-      fontFamily: 'Studio Hupo', fontWeight: 700, fill: '#ff77b7', opacity: 1,
-      stroke: '#fff4a8', strokeWidth: 6, skewX: -6, charSpacing: 45,
-      shadow: { color: 'rgba(111,61,255,.55)', blur: 10, offsetX: 4, offsetY: 6 },
-    },
-  },
-  {
-    id: 'comic-pop',
-    name: '漫画爆炸字',
-    description: '幼圆卡通 · 强描边',
-    style: {
-      fontFamily: 'Studio YouYuan', fontWeight: 900, fill: '#ffec3d', opacity: 1,
-      stroke: '#ef3340', strokeWidth: 8, skewX: -10, charSpacing: 15,
-      shadow: { color: '#241133', blur: 0, offsetX: 7, offsetY: 8 },
-    },
-  },
-  {
-    id: 'butter-poster',
-    name: '黄油海报',
-    description: '站酷黄油体 · 复古海报',
-    style: {
-      fontFamily: 'ZCOOL QingKe HuangYou', fontWeight: 400, fill: '#ffcf45', opacity: 1,
-      stroke: '#3b2413', strokeWidth: 3, skewX: -3, charSpacing: 55,
-      shadow: { color: 'rgba(255,124,47,.38)', blur: 12, offsetX: 2, offsetY: 4 },
-    },
-  },
-  {
-    id: 'neon-cyan',
-    name: '霓虹发光',
-    description: '科技氛围',
-    style: {
-      fontFamily: 'Noto Sans SC', fontWeight: 700, fill: '#7ff8ff', opacity: 1,
-      stroke: '#14355f', strokeWidth: 2, skewX: 0, charSpacing: 80,
-      shadow: { color: 'rgba(66,232,255,.95)', blur: 22, offsetX: 0, offsetY: 0 },
-    },
-  },
-  {
-    id: 'gold-xingkai',
-    name: '鎏金行楷',
-    description: '行楷艺术字 · 高级题字',
-    style: {
-      fontFamily: 'Studio XingKai', fontWeight: 700, fill: '#ffd76a', opacity: 1,
-      stroke: '#5d3211', strokeWidth: 2, skewX: -5, charSpacing: 70,
-      shadow: { color: 'rgba(255,184,56,.52)', blur: 13, offsetX: 2, offsetY: 4 },
-    },
-  },
-  {
-    id: 'caiyun-pop',
-    name: '彩云艺术字',
-    description: '装饰感标题',
-    style: {
-      fontFamily: 'Studio Caiyun', fontWeight: 700, fill: '#8be8ff', opacity: 1,
-      stroke: '#7a4cff', strokeWidth: 5, skewX: -4, charSpacing: 50,
-      shadow: { color: 'rgba(255,91,168,.48)', blur: 14, offsetX: 4, offsetY: 5 },
-    },
-  },
-  {
-    id: 'ink-brush',
-    name: '国风墨韵',
-    description: '毛笔题字',
-    style: {
-      fontFamily: 'Ma Shan Zheng', fontWeight: 400, fill: '#f3ead8', opacity: .96,
-      stroke: '#251c17', strokeWidth: 1, skewX: -2, charSpacing: 35,
-      shadow: { color: 'rgba(0,0,0,.42)', blur: 5, offsetX: 2, offsetY: 3 },
-    },
-  },
-  {
-    id: 'lishu-seal',
-    name: '隶书印章风',
-    description: '古朴标题',
-    style: {
-      fontFamily: 'Studio LiSu', fontWeight: 700, fill: '#f2dfc6', opacity: 1,
-      stroke: '#7a241f', strokeWidth: 3, skewX: 0, charSpacing: 85,
-      shadow: { color: 'rgba(42,13,9,.46)', blur: 4, offsetX: 3, offsetY: 4 },
-    },
-  },
-  {
-    id: 'wenkai-note',
-    name: '文艺手写',
-    description: '霞鹜文楷 · 轻松自然',
-    style: {
-      fontFamily: 'LXGW WenKai', fontWeight: 400, fill: '#ffffff', opacity: .95,
-      stroke: 'rgba(0,0,0,0)', strokeWidth: 0, skewX: -2, charSpacing: 25,
-      shadow: { color: 'rgba(0,0,0,.28)', blur: 6, offsetX: 1, offsetY: 2 },
-    },
-  },
-  {
-    id: 'pixel-game',
-    name: '像素游戏',
-    description: '复古像素',
-    style: {
-      fontFamily: 'Press Start 2P', fontWeight: 400, fill: '#83ff78', opacity: 1,
-      stroke: '#142012', strokeWidth: 2, skewX: 0, charSpacing: 40,
-      shadow: { color: 'rgba(0,0,0,.48)', blur: 0, offsetX: 5, offsetY: 5 },
-    },
-  },
+  { id: 'minimal-white', name: '简约白字', description: '干净通用', style: { fontFamily: 'Studio Modern', fontWeight: 700, fill: '#ffffff', opacity: 1, stroke: 'rgba(0,0,0,0)', strokeWidth: 0, skewX: 0, charSpacing: 0, shadow: { color: 'rgba(0,0,0,.32)', blur: 8, offsetX: 0, offsetY: 3 } } },
+  { id: 'poster-outline', name: '黑描边标题', description: '高对比标题', style: { fontFamily: 'Studio Poster', fontWeight: 900, fill: '#ffffff', opacity: 1, stroke: '#111111', strokeWidth: 5, skewX: 0, charSpacing: 20, shadow: { color: 'rgba(0,0,0,.34)', blur: 8, offsetX: 3, offsetY: 4 } } },
+  { id: 'cartoon-bubble', name: '卡通泡泡字', description: '圆润卡通 · 明亮可爱', style: { fontFamily: 'Studio Cartoon', fontWeight: 800, fill: '#fff26a', opacity: 1, stroke: '#6c4cff', strokeWidth: 7, skewX: -4, charSpacing: 30, shadow: { color: 'rgba(0,0,0,.30)', blur: 5, offsetX: 5, offsetY: 7 } } },
+  { id: 'candy-hupo', name: '糖果琥珀字', description: '圆润卡通 · 糖果描边', style: { fontFamily: 'Studio Hupo', fontWeight: 700, fill: '#ff77b7', opacity: 1, stroke: '#fff4a8', strokeWidth: 6, skewX: -6, charSpacing: 45, shadow: { color: 'rgba(111,61,255,.55)', blur: 10, offsetX: 4, offsetY: 6 } } },
+  { id: 'comic-pop', name: '漫画爆炸字', description: '粗黑海报 · 强描边', style: { fontFamily: 'Studio Poster', fontWeight: 900, fill: '#ffec3d', opacity: 1, stroke: '#ef3340', strokeWidth: 8, skewX: -10, charSpacing: 15, shadow: { color: '#241133', blur: 0, offsetX: 7, offsetY: 8 } } },
+  { id: 'butter-poster', name: '黄油海报', description: '复古粗黑海报', style: { fontFamily: 'Studio Poster', fontWeight: 900, fill: '#ffcf45', opacity: 1, stroke: '#3b2413', strokeWidth: 3, skewX: -3, charSpacing: 55, shadow: { color: 'rgba(255,124,47,.38)', blur: 12, offsetX: 2, offsetY: 4 } } },
+  { id: 'neon-cyan', name: '霓虹发光', description: '科技氛围', style: { fontFamily: 'Studio Modern', fontWeight: 700, fill: '#7ff8ff', opacity: 1, stroke: '#14355f', strokeWidth: 2, skewX: 0, charSpacing: 80, shadow: { color: 'rgba(66,232,255,.95)', blur: 22, offsetX: 0, offsetY: 0 } } },
+  { id: 'gold-xingkai', name: '鎏金行楷', description: '行楷艺术字 · 高级题字', style: { fontFamily: 'Studio XingKai', fontWeight: 700, fill: '#ffd76a', opacity: 1, stroke: '#5d3211', strokeWidth: 2, skewX: -5, charSpacing: 70, shadow: { color: 'rgba(255,184,56,.52)', blur: 13, offsetX: 2, offsetY: 4 } } },
+  { id: 'caiyun-pop', name: '彩云艺术字', description: '装饰感标题', style: { fontFamily: 'Studio Caiyun', fontWeight: 700, fill: '#8be8ff', opacity: 1, stroke: '#7a4cff', strokeWidth: 5, skewX: -4, charSpacing: 50, shadow: { color: 'rgba(255,91,168,.48)', blur: 14, offsetX: 4, offsetY: 5 } } },
+  { id: 'ink-brush', name: '国风墨韵', description: '毛笔题字', style: { fontFamily: 'Studio Brush', fontWeight: 700, fill: '#f3ead8', opacity: .96, stroke: '#251c17', strokeWidth: 1, skewX: -2, charSpacing: 35, shadow: { color: 'rgba(0,0,0,.42)', blur: 5, offsetX: 2, offsetY: 3 } } },
+  { id: 'lishu-seal', name: '隶书印章风', description: '古朴标题', style: { fontFamily: 'Studio LiSu', fontWeight: 700, fill: '#f2dfc6', opacity: 1, stroke: '#7a241f', strokeWidth: 3, skewX: 0, charSpacing: 85, shadow: { color: 'rgba(42,13,9,.46)', blur: 4, offsetX: 3, offsetY: 4 } } },
+  { id: 'wenkai-note', name: '文艺手写', description: '文楷 · 轻松自然', style: { fontFamily: 'Studio WenKai', fontWeight: 500, fill: '#ffffff', opacity: .95, stroke: 'rgba(0,0,0,0)', strokeWidth: 0, skewX: -2, charSpacing: 25, shadow: { color: 'rgba(0,0,0,.28)', blur: 6, offsetX: 1, offsetY: 2 } } },
+  { id: 'graffiti-hand', name: '手写涂鸦', description: '轻松手写风', style: { fontFamily: 'Studio Hand', fontWeight: 700, fill: '#fff9d6', opacity: 1, stroke: '#4b3666', strokeWidth: 2, skewX: -8, charSpacing: 28, shadow: { color: 'rgba(0,0,0,.25)', blur: 4, offsetX: 3, offsetY: 4 } } },
+  { id: 'pixel-game', name: '像素游戏', description: '复古像素', style: { fontFamily: 'Studio Pixel', fontWeight: 700, fill: '#83ff78', opacity: 1, stroke: '#142012', strokeWidth: 2, skewX: 0, charSpacing: 40, shadow: { color: 'rgba(0,0,0,.48)', blur: 0, offsetX: 5, offsetY: 5 } } },
 ];
