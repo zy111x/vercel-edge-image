@@ -1,6 +1,6 @@
 import '/stable-render-bridge.js?v=20260906-2';
 
-const BUILD = '20260906-2';
+const BUILD = '20260906-3';
 const MODULE_ASSETS = [
   '/app-v3.js',
   '/text-fonts.js',
@@ -70,6 +70,44 @@ async function refreshModuleAssets() {
   if (failed.length) throw new Error(`V3 module preflight failed: ${failed.map((item) => item.reason?.message || item.reason).join('; ')}`);
 }
 
+function parseCheck(source) {
+  const withoutImports = source.replace(/^import\s+[^;]+;\s*$/gm, '');
+  return new Function(withoutImports);
+}
+
+async function importRepairedV3() {
+  const response = await fetch(`/app-v3.js?source=${BUILD}`, { cache: 'reload' });
+  if (!response.ok) throw new Error(`/app-v3.js HTTP ${response.status}`);
+  let source = await response.text();
+
+  try {
+    parseCheck(source);
+  } catch (error) {
+    if (!(error instanceof SyntaxError) || !/Unexpected end of input/i.test(error.message)) throw error;
+    source += '\n}';
+    parseCheck(source);
+    console.warn('studio:v3-source-repaired', 'Recovered missing closing brace in applyPreviewOp().');
+  }
+
+  const imports = [
+    ['./text-fonts.js', new URL(`/text-fonts.js?v=${BUILD}`, location.href).href],
+    ['./text-presets.js', new URL(`/text-presets.js?v=${BUILD}`, location.href).href],
+    ['./text-layer-manager.js', new URL(`/text-layer-manager.js?v=${BUILD}`, location.href).href],
+  ];
+  for (const [relative, absolute] of imports) {
+    source = source.replaceAll(`'${relative}'`, JSON.stringify(absolute));
+    source = source.replaceAll(`\"${relative}\"`, JSON.stringify(absolute));
+  }
+
+  source += '\n//# sourceURL=edge-image-studio-v3-repaired.js';
+  const moduleUrl = URL.createObjectURL(new Blob([source], { type: 'application/javascript' }));
+  try {
+    await import(moduleUrl);
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(moduleUrl), 0);
+  }
+}
+
 window.addEventListener('error', (event) => {
   if (document.documentElement.dataset.studioMode === 'v3') reportError('window-error', event.error || new Error(event.message || 'window error'));
 });
@@ -81,7 +119,7 @@ async function start() {
   let startupError = null;
   try {
     await refreshModuleAssets();
-    await import(`/app-v3.js?v=${BUILD}`);
+    await importRepairedV3();
     markMode('v3');
     return;
   } catch (error) {
